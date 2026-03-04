@@ -51,8 +51,10 @@ while True:
 
     if handler:
         body = handler(request)
+        status_line = "HTTP/1.1 200 OK"
     else:
         body = "404 Not Found"
+        status_line = "HTTP/1.1 404 Not Found"
 
     response = (
         "HTTP/1.1 200 OK\r\n"
