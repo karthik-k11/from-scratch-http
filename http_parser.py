@@ -1,0 +1,26 @@
+class HttpRequest:
+    def __init__(self, raw_request: str):
+        self.raw_request = raw_request
+        self.method = None
+        self.path = None
+        self.version = None
+        self.headers = {}
+        self.body = None
+
+        self.parse()
+
+    def parse(self):
+        lines = self.raw_request.split("\r\n")
+
+        request_line = lines[0]
+        self.method, self.path, self.version = request_line.split()
+
+        i = 1
+        while lines[i] != "":
+            key, value = lines[i].split(":", 1)
+            self.headers[key.strip()] = value.strip()
+            i += 1
+
+        body_index = i + 1
+        if body_index < len(lines):
+            self.body = "\n".join(lines[body_index:])
