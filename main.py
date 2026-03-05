@@ -3,6 +3,7 @@ from http_parser import HttpRequest
 from router import Router
 import json
 import threading
+from logger import log_info, log_error
 
 HOST = "127.0.0.1"
 PORT = 8080
