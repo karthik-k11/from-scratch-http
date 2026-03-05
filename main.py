@@ -29,6 +29,7 @@ def stats_handler(request):
 router.add_route("GET", "/", home_handler)
 router.add_route("GET", "/hello", hello_handler)
 router.add_route("GET", "/stats", stats_handler)
+router.add_route("POST", "/echo", echo_handler)
 
 
 ##Server
