@@ -46,6 +46,7 @@ while True:
     print("\nParsed Request:")
     print("Method:", request.method)
     print("Path:", request.path)
+    print("Query Params:", request.query_params)
 
     handler = router.resolve(request.method, request.path)
 
