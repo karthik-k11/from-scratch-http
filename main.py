@@ -71,9 +71,11 @@ def handle_client(client_socket, client_address):
     if handler:
         body = handler(request)
         status_line = "HTTP/1.1 200 OK"
+        log_info(f"{request.method} {request.path} 200")
     else:
         body = "404 Not Found"
         status_line = "HTTP/1.1 404 Not Found"
+        log_error(f"{request.method} {request.path} 404")
 
     body_bytes = body.encode()
 
