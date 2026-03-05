@@ -9,9 +9,7 @@ PORT = 8080
 
 router = Router()
 
-
 ##Handlers
-
 def home_handler(request):
     return "Welcome to From Scratch HTTP Server"
 
@@ -23,6 +21,7 @@ def hello_handler(request):
 
 def stats_handler(request):
     return "Server running. Everything OK."
+
 
 def echo_handler(request):
 
@@ -38,38 +37,35 @@ def echo_handler(request):
 
     return f"Hello {name}, JSON received!"
 
-
 ##Routes
-
 router.add_route("GET", "/", home_handler)
 router.add_route("GET", "/hello", hello_handler)
 router.add_route("GET", "/stats", stats_handler)
 router.add_route("POST", "/echo", echo_handler)
 
-
 ##Server
-
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind((HOST, PORT))
 server_socket.listen(5)
 
 print(f"Server running on http://{HOST}:{PORT}")
 
-while True:
 
-    client_socket, client_address = server_socket.accept()
+##Handler 
+def handle_client(client_socket, client_address):
 
     request_data = client_socket.recv(1024)
 
     if not request_data:
         client_socket.close()
-        continue
+        return
 
     raw_request = request_data.decode()
 
     request = HttpRequest(raw_request)
 
     print("\nParsed Request:")
+    print("Client:", client_address)
     print("Method:", request.method)
     print("Path:", request.path)
     print("Query Params:", request.query_params)
@@ -96,3 +92,14 @@ while True:
     client_socket.sendall(response)
 
     client_socket.close()
+
+while True:
+
+    client_socket, client_address = server_socket.accept()
+
+    thread = threading.Thread(
+        target=handle_client,
+        args=(client_socket, client_address)
+    )
+
+    thread.start()
