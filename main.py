@@ -64,13 +64,7 @@ def handle_client(client_socket, client_address):
     raw_request = request_data.decode()
 
     request = HttpRequest(raw_request)
-
-    print("\nParsed Request:")
-    print("Client:", client_address)
-    print("Method:", request.method)
-    print("Path:", request.path)
-    print("Query Params:", request.query_params)
-    print("Body:", request.body)
+    log_info(f"{client_address} {request.method} {request.path}")
 
     handler = router.resolve(request.method, request.path)
 
