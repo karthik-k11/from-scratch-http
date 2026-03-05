@@ -72,6 +72,7 @@ while True:
     print("Method:", request.method)
     print("Path:", request.path)
     print("Query Params:", request.query_params)
+    print("Body:", request.body)
 
     handler = router.resolve(request.method, request.path)
 
