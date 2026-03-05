@@ -13,7 +13,8 @@ def home_handler(request):
 
 
 def hello_handler(request):
-    return "Hello from router!"
+    name = request.query_params.get("name", "Guest")
+    return f"Hello {name}"
 
 
 def stats_handler(request):
