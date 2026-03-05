@@ -23,6 +23,20 @@ def hello_handler(request):
 def stats_handler(request):
     return "Server running. Everything OK."
 
+def echo_handler(request):
+
+    if not request.body:
+        return "Empty body"
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return "Invalid JSON"
+
+    name = data.get("name", "Unknown")
+
+    return f"Hello {name}, JSON received!"
+
 
 ##Routes
 
