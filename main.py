@@ -7,7 +7,9 @@ PORT = 8080
 
 router = Router()
 
+
 ##Handlers
+
 def home_handler(request):
     return "Welcome to From Scratch HTTP Server"
 
@@ -20,12 +22,16 @@ def hello_handler(request):
 def stats_handler(request):
     return "Server running. Everything OK."
 
-##Register routes
+
+##Routes
+
 router.add_route("GET", "/", home_handler)
 router.add_route("GET", "/hello", hello_handler)
 router.add_route("GET", "/stats", stats_handler)
 
-##TCP
+
+##Server
+
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind((HOST, PORT))
 server_socket.listen(5)
@@ -33,6 +39,7 @@ server_socket.listen(5)
 print(f"Server running on http://{HOST}:{PORT}")
 
 while True:
+
     client_socket, client_address = server_socket.accept()
 
     request_data = client_socket.recv(1024)
@@ -42,6 +49,7 @@ while True:
         continue
 
     raw_request = request_data.decode()
+
     request = HttpRequest(raw_request)
 
     print("\nParsed Request:")
@@ -58,13 +66,15 @@ while True:
         body = "404 Not Found"
         status_line = "HTTP/1.1 404 Not Found"
 
-    response = (
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Type: text/plain\r\n"
-        f"Content-Length: {len(body)}\r\n"
-        "\r\n"
-        f"{body}"
-    )
+    body_bytes = body.encode()
 
-    client_socket.sendall(response.encode())
+    response = (
+        f"{status_line}\r\n"
+        "Content-Type: text/plain\r\n"
+        f"Content-Length: {len(body_bytes)}\r\n"
+        "\r\n"
+    ).encode() + body_bytes
+
+    client_socket.sendall(response)
+
     client_socket.close()
