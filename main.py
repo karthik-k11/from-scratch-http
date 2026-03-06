@@ -4,11 +4,13 @@ from router import Router
 import json
 import threading
 from logger import log_info, log_error
+from database.minidb import MiniDB
 
 HOST = "127.0.0.1"
 PORT = 8080
 
 router = Router()
+db = MiniDB()
 
 ##Handlers
 def home_handler(request):
@@ -22,6 +24,12 @@ def hello_handler(request):
 
 def stats_handler(request):
     return "Server running. Everything OK."
+
+def db_stats_handler(request):
+
+    stats = db.stats()
+
+    return f"Total keys: {stats['total_keys']}"
 
 
 def echo_handler(request):
@@ -38,11 +46,56 @@ def echo_handler(request):
 
     return f"Hello {name}, JSON received!"
 
+def insert_handler(request):
+
+    if not request.body:
+        return "Empty body"
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return "Invalid JSON"
+
+    key = data.get("key")
+    value = data.get("value")
+
+    if not key or not value:
+        return "Missing key/value"
+
+    db.insert(key, value)
+
+    return "Inserted successfully"
+
+
+def select_handler(request):
+
+    key = request.query_params.get("key")
+
+    if not key:
+        return "Key required"
+
+    value = db.select(key)
+
+    if value is None:
+        return "Key not found"
+
+    return f"{key} = {value}"
+
+
+def db_stats_handler(request):
+
+    stats = db.stats()
+
+    return f"Total keys: {stats['total_keys']}"
+
 ##Routes
 router.add_route("GET", "/", home_handler)
 router.add_route("GET", "/hello", hello_handler)
 router.add_route("GET", "/stats", stats_handler)
 router.add_route("POST", "/echo", echo_handler)
+router.add_route("POST", "/insert", insert_handler)
+router.add_route("GET", "/select", select_handler)
+router.add_route("GET", "/dbstats", db_stats_handler)
 
 ##Server
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
