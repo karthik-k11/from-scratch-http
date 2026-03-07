@@ -108,7 +108,12 @@ print(f"Server running on http://{HOST}:{PORT}")
 ##Handler 
 def handle_client(client_socket, client_address):
 
-    request_data = client_socket.recv(1024)
+    while True:
+
+        request_data = client_socket.recv(1024)
+
+        if not request_data:
+            break
 
     if not request_data:
         client_socket.close()
