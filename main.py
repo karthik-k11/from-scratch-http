@@ -146,7 +146,12 @@ def handle_client(client_socket, client_address):
 
     client_socket.sendall(response)
 
-    client_socket.close()
+        connection_header = request.headers.get("Connection", "").lower()
+
+    if connection_header != "keep-alive":
+        break
+
+client_socket.close()
 
 while True:
 
