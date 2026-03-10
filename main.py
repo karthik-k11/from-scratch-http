@@ -13,6 +13,10 @@ PORT = 8080
 router = Router()
 db = MiniDB()
 
+middleware = MiddlewareManager()
+middleware.add(logging_middleware)
+middleware.add(timing_middleware)
+
 
 ##Handlers
 def home_handler(request):
@@ -95,6 +99,8 @@ router.add_route("POST", "/echo", echo_handler)
 router.add_route("POST", "/insert", insert_handler)
 router.add_route("GET", "/select", select_handler)
 router.add_route("GET", "/dbstats", db_stats_handler)
+
+
 
 
 ##Server setup
