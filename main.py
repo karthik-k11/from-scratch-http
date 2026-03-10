@@ -106,13 +106,12 @@ router.add_route("GET", "/dbstats", db_stats_handler)
 ##Server setup
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind((HOST, PORT))
-server_socket.listen(5)
+server_socket.listen(100)
 
 print(f"Server running on http://{HOST}:{PORT}")
 
 
 ##Client handler
-
 def handle_client(client_socket, client_address):
 
     while True:
