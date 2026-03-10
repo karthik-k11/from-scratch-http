@@ -125,6 +125,7 @@ def handle_client(client_socket, client_address):
         raw_request = request_data.decode()
 
         request = HttpRequest(raw_request)
+        middleware.run_before(request)
 
         log_info(f"{client_address} {request.method} {request.path}")
 
