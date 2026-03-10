@@ -5,6 +5,7 @@ import json
 import threading
 from logger import log_info, log_error
 from database.minidb import MiniDB
+from middleware import MiddlewareManager, logging_middleware, timing_middleware
 
 HOST = "127.0.0.1"
 PORT = 8080
