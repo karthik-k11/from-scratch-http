@@ -17,7 +17,7 @@ class MiddlewareManager:
 
 ##Example middleware
 def logging_middleware(request):
-    log_info(f"[MIDDLEWARE] {request.method} {request.path}")
+   log_info(f"[MIDDLEWARE] {request.method} {request.path}")
 
 
 def timing_middleware(request):
