@@ -136,24 +136,31 @@ Requests/sec: 42.33
 ## **Key Concepts Demonstrated**
 
 **HTTP over TCP**
+
 Understanding how HTTP is transmitted as text over raw TCP sockets.
 
 **Custom HTTP Parsing**
+
 Manual parsing of request line, headers, and body.
 
 **Routing System**
+
 Mapping (HTTP method, path) to handler functions.
 
 **Middleware Architecture**
+
 Pre-processing pipeline for request logging and timing.
 
 **Concurrency Model**
+
 Thread-per-connection server design.
 
 **Networked Database API**
+
 Exposing a key-value database through HTTP endpoints.
 
-**Why This Project ?**
+---
+## **Why This Project ?**
 
 Most web development uses frameworks that abstract away server internals.
 This project explores how web frameworks work under the hood by implementing core components from scratch.
