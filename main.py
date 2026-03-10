@@ -12,6 +12,7 @@ PORT = 8080
 router = Router()
 db = MiniDB()
 
+
 ##Handlers
 def home_handler(request):
     return "Welcome to From Scratch HTTP Server"
@@ -24,12 +25,6 @@ def hello_handler(request):
 
 def stats_handler(request):
     return "Server running. Everything OK."
-
-def db_stats_handler(request):
-
-    stats = db.stats()
-
-    return f"Total keys: {stats['total_keys']}"
 
 
 def echo_handler(request):
@@ -45,6 +40,7 @@ def echo_handler(request):
     name = data.get("name", "Unknown")
 
     return f"Hello {name}, JSON received!"
+
 
 def insert_handler(request):
 
@@ -88,16 +84,19 @@ def db_stats_handler(request):
 
     return f"Total keys: {stats['total_keys']}"
 
+
 ##Routes
 router.add_route("GET", "/", home_handler)
 router.add_route("GET", "/hello", hello_handler)
 router.add_route("GET", "/stats", stats_handler)
 router.add_route("POST", "/echo", echo_handler)
+
 router.add_route("POST", "/insert", insert_handler)
 router.add_route("GET", "/select", select_handler)
 router.add_route("GET", "/dbstats", db_stats_handler)
 
-##Server
+
+##Server setup
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind((HOST, PORT))
 server_socket.listen(5)
@@ -105,7 +104,8 @@ server_socket.listen(5)
 print(f"Server running on http://{HOST}:{PORT}")
 
 
-##Handler 
+##Client handler
+
 def handle_client(client_socket, client_address):
 
     while True:
@@ -115,43 +115,40 @@ def handle_client(client_socket, client_address):
         if not request_data:
             break
 
-    if not request_data:
-        client_socket.close()
-        return
+        raw_request = request_data.decode()
 
-    raw_request = request_data.decode()
+        request = HttpRequest(raw_request)
 
-    request = HttpRequest(raw_request)
-    log_info(f"{client_address} {request.method} {request.path}")
+        log_info(f"{client_address} {request.method} {request.path}")
 
-    handler = router.resolve(request.method, request.path)
+        handler = router.resolve(request.method, request.path)
 
-    if handler:
-        body = handler(request)
-        status_line = "HTTP/1.1 200 OK"
-        log_info(f"{request.method} {request.path} 200")
-    else:
-        body = "404 Not Found"
-        status_line = "HTTP/1.1 404 Not Found"
-        log_error(f"{request.method} {request.path} 404")
+        if handler:
+            body = handler(request)
+            status_line = "HTTP/1.1 200 OK"
+            log_info(f"{request.method} {request.path} 200")
+        else:
+            body = "404 Not Found"
+            status_line = "HTTP/1.1 404 Not Found"
+            log_error(f"{request.method} {request.path} 404")
 
-    body_bytes = body.encode()
+        body_bytes = body.encode()
 
-    response = (
-        f"{status_line}\r\n"
-        "Content-Type: text/plain\r\n"
-        f"Content-Length: {len(body_bytes)}\r\n"
-        "\r\n"
-    ).encode() + body_bytes
+        response = (
+            f"{status_line}\r\n"
+            "Content-Type: text/plain\r\n"
+            f"Content-Length: {len(body_bytes)}\r\n"
+            "\r\n"
+        ).encode() + body_bytes
 
-    client_socket.sendall(response)
+        client_socket.sendall(response)
 
         connection_header = request.headers.get("Connection", "").lower()
 
-    if connection_header != "keep-alive":
-        break
+        if connection_header != "keep-alive":
+            break
 
-client_socket.close()
+    client_socket.close()
 
 while True:
 
